@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Website Overlay Example with Pincode</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.2); /* थोडं अंधुक दिसेल */
+      display: block; /* सुरुवातीला overlay दिसेल */
+    }
+
+    button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      padding: 10px 15px;
+      z-index: 1000;
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- पहिली वेबसाइट (config.json मधून) -->
+    <iframe id="mainFrame" src="" allow="camera; microphone; autoplay; fullscreen" allowfullscreen></iframe>
+
+    <!-- दुसरी वेबसाइट overlay (ही पण config.json मधून) -->
+    <div class="overlay" id="overlay">
+      <iframe id="overlayFrame" src=""></iframe>
+      <button onclick="askPincode()">♥️ Unlock</button>
+    </div>
+  </div>
+
+  <script>
+    // config.json मधून दोन्ही URL लोड करणे
+    async function loadSites() {
+      try {
+        let res = await fetch("config.json?cache=" + Date.now());
+        let data = await res.json();
+
+        // पहिली साइट
+        document.getElementById("mainFrame").src = data.mainUrl;
+
+        // overlay साइट
+        document.getElementById("overlayFrame").src = data.overlayUrl;
+
+      } catch (e) {
+        console.error("Error loading config.json", e);
+      }
+    }
+
+    function askPincode() {
+      let userPin = prompt("Enter your pincode:");
+      let correctPin = "0000"; // इथे तू हव्या त्या पिनकोड टाकू शकतोस
+
+      if (userPin === correctPin) {
+        document.getElementById("overlay").style.display = "none";
+        alert("Access Granted ✅");
+      } else {
+        alert("Wrong Pincode ❌");
+      }
+    }
+
+    // लोड होताच दोन्ही साइट fetch करा
+    loadSites();
+  </script>
+</body>
+</html>
